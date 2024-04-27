@@ -1,4 +1,4 @@
-package com.example.multi_barcode_scan_android.ui.theme
+package com.example.multi_barcode_scan_android.theme
 
 import androidx.compose.ui.graphics.Color
 
