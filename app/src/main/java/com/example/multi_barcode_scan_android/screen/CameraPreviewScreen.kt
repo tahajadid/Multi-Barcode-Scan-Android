@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.example.multi_barcode_scan_android.BarCodeAndQRCodeAnalyser
+import com.example.multi_barcode_scan_android.analyser.BarCodeAndQRCodeAnalyser
 import com.example.multi_barcode_scan_android.MainActivity
 import com.example.multi_barcode_scan_android.RATIO_16_9_VALUE
 import com.example.multi_barcode_scan_android.RATIO_4_3_VALUE
@@ -43,6 +43,7 @@ private lateinit var cameraControl: CameraControl
 
 @Composable
 fun CameraPreviewScreen() {
+
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -135,10 +136,8 @@ private fun initializeAnalyzer(screenAspectRatio: Int, rotation: Int): UseCase {
                 executor,
                 BarCodeAndQRCodeAnalyser { barcode ->
                     /**
-                     * Change update  to true if you want to scan only one barcode or it will continue scaning after detecting for the first time
-                     */
-                    /**
-                     * Change update  to true if you want to scan only one barcode or it will continue scaning after detecting for the first time
+                     * Change update  to true if you want to scan only one barcode or it will
+                     * continue scanning after detecting for the first time
                      */
                     if (processingBarcode.compareAndSet(false, false)) {
                         onBarcodeDetected(barcode)
