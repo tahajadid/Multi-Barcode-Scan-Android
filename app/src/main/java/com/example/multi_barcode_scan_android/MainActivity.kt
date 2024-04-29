@@ -8,16 +8,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import android.Manifest
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import com.example.multi_barcode_scan_android.navigation.Navigation
 import com.example.multi_barcode_scan_android.screen.CameraPreviewScreen
 import com.example.multi_barcode_scan_android.theme.MultiBarcodeScanAndroidTheme
 import com.google.mlkit.vision.barcode.Barcode
-import java.util.concurrent.atomic.AtomicBoolean
 
 const val RATIO_4_3_VALUE = 4.0 / 3.0
 const val RATIO_16_9_VALUE = 16.0 / 9.0
@@ -32,7 +29,8 @@ class MainActivity : ComponentActivity() {
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                setCameraPreview()
+                // Navigation()
+                //setCameraPreview()
             } else {
                 // Camera permission denied
             }
@@ -46,8 +44,15 @@ class MainActivity : ComponentActivity() {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CAMERA
-            ) -> {
-                setCameraPreview()
+            ),
+            -> {
+                setContent {
+                    MultiBarcodeScanAndroidTheme {
+                        Navigation()
+                    }
+                }
+
+                //setCameraPreview()
             }
             else -> {
                 cameraPermissionRequest.launch(Manifest.permission.CAMERA)
@@ -55,6 +60,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /*
     private fun setCameraPreview() {
         setContent {
             MultiBarcodeScanAndroidTheme {
@@ -69,21 +75,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+     */
 }
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MultiBarcodeScanAndroidTheme {
-        Greeting("Android")
-    }
-}
-

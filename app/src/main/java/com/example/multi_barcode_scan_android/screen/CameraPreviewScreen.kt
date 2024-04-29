@@ -1,6 +1,7 @@
 package com.example.multi_barcode_scan_android.screen
 
 import android.content.Context
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import androidx.camera.core.AspectRatio
@@ -21,10 +22,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.example.multi_barcode_scan_android.analyser.BarCodeAndQRCodeAnalyser
 import com.example.multi_barcode_scan_android.MainActivity
 import com.example.multi_barcode_scan_android.RATIO_16_9_VALUE
 import com.example.multi_barcode_scan_android.RATIO_4_3_VALUE
+import com.example.multi_barcode_scan_android.actualValues
+import com.example.multi_barcode_scan_android.navigation.Screen
 import com.google.mlkit.vision.barcode.Barcode
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -40,10 +44,14 @@ private val executor by lazy {
 }
 private lateinit var cameraInfo: CameraInfo
 private lateinit var cameraControl: CameraControl
+private var isFirst = false
+private lateinit var actualNavController: NavController
+
 
 @Composable
-fun CameraPreviewScreen() {
+fun CameraPreviewScreen(navController: NavController) {
 
+    actualNavController = navController
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -153,6 +161,28 @@ fun onBarcodeDetected(barcode: MutableList<Barcode>) {
         Log.d("valueSprin", "Value : " + it.rawValue.toString())
     }
     Log.d("valueSprin", "+ + + + + + + + ++ + ++ ++ End ")
+
+    if (isFirst) {
+        if (barcode.isNotEmpty()) {
+            barcode.forEach {
+                actualValues.add(it.rawValue.toString())
+            }
+
+
+        }
+        isFirst = false
+    } else {
+        barcode.forEach {
+            if (!actualValues.contains(it.rawValue)) actualValues.add(it.rawValue)
+        }
+        if (actualValues.size > 1) startEndTimer()
+    }
+}
+
+private fun startEndTimer() {
+    Handler().postDelayed({
+        actualNavController.navigate(Screen.ResultScreen.route)
+    }, 2000)
 }
 
 private fun aspectRatio(width: Int, height: Int): Int {
