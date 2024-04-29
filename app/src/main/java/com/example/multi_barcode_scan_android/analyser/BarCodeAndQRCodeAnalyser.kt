@@ -1,9 +1,10 @@
-package com.example.multi_barcode_scan_android
+package com.example.multi_barcode_scan_android.analyser
 
 
 import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.example.multi_barcode_scan_android.BarcodeAnalyzerListener
 import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
