@@ -12,8 +12,7 @@ import com.example.multi_barcode_scan_android.navigation.Navigation
 import com.example.multi_barcode_scan_android.theme.MultiBarcodeScanAndroidTheme
 import com.google.mlkit.vision.barcode.Barcode
 
-const val RATIO_4_3_VALUE = 4.0 / 3.0
-const val RATIO_16_9_VALUE = 16.0 / 9.0
+
 typealias BarcodeAnalyzerListener = (barcode: MutableList<Barcode>) -> Unit
 
 class MainActivity : ComponentActivity() {

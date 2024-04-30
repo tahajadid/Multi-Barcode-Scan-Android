@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.multi_barcode_scan_android.MainActivity
-import com.example.multi_barcode_scan_android.actualValues
+import com.example.multi_barcode_scan_android.util.constants.actualValues
 import com.example.multi_barcode_scan_android.theme.MultiBarcodeScanAndroidTheme
 
 @Composable
@@ -49,7 +49,7 @@ fun ChoiceList(
         ),
         content = {
 
-            Log.d("TestValueMutt"," mutableListOf<String>() : "+actualValues)
+            Log.d("TestValueMutt"," mutableListOf<String>() : "+ actualValues)
 
             items(actualValues) { it ->
 
