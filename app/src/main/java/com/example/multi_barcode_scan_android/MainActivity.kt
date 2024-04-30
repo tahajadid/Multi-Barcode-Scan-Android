@@ -5,14 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import android.Manifest
+import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
 import com.example.multi_barcode_scan_android.navigation.Navigation
-import com.example.multi_barcode_scan_android.screen.CameraPreviewScreen
 import com.example.multi_barcode_scan_android.theme.MultiBarcodeScanAndroidTheme
 import com.google.mlkit.vision.barcode.Barcode
 
@@ -29,7 +25,6 @@ class MainActivity : ComponentActivity() {
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                // Navigation()
                 //setCameraPreview()
             } else {
                 // Camera permission denied
@@ -48,7 +43,7 @@ class MainActivity : ComponentActivity() {
             -> {
                 setContent {
                     MultiBarcodeScanAndroidTheme {
-                        Navigation()
+                        initNavigation()
                     }
                 }
 
@@ -60,21 +55,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /*
-    private fun setCameraPreview() {
-        setContent {
-            MultiBarcodeScanAndroidTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    CameraPreviewScreen()
-                }
-
-            }
-        }
+    @Composable
+    fun initNavigation() {
+        Navigation()
     }
-
-     */
 }
