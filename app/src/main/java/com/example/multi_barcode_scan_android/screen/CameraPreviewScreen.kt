@@ -25,9 +25,10 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.multi_barcode_scan_android.MainActivity
 import com.example.multi_barcode_scan_android.navigation.Screen
-import com.example.multi_barcode_scan_android.util.analyser.BarCodeAndQRCodeAnalyser
+import com.example.multi_barcode_scan_android.util.analyser.BarCodeCustomAnalyser
 import com.example.multi_barcode_scan_android.util.constants.Constants.RATIO_16_9_VALUE
 import com.example.multi_barcode_scan_android.util.constants.Constants.RATIO_4_3_VALUE
+import com.example.multi_barcode_scan_android.util.constants.Constants.TIME_TO_END
 import com.example.multi_barcode_scan_android.util.constants.actualValues
 import com.google.mlkit.vision.barcode.Barcode
 import java.util.concurrent.Executors
@@ -145,31 +146,16 @@ private fun initializeAnalyzer(
         .also {
             it.setAnalyzer(
                 executor,
-                @Suppress("ktlint:standard:no-consecutive-comments")
-                BarCodeAndQRCodeAnalyser { barcode ->
-                    /**
-                     * Change update  to true if you want to scan only one barcode or it will
-                     * continue scanning after detecting for the first time
-                     */
-                    /**
-                     * Change update  to true if you want to scan only one barcode or it will
-                     * continue scanning after detecting for the first time
-                     */
+                (BarCodeCustomAnalyser { barcode ->
                     if (processingBarcode.compareAndSet(false, false)) {
                         onBarcodeDetected(barcode)
-                    }
-                },
-            )
+                    } else Log.d("DetectionLOG", "Nothind detected")
+                }),
+                )
         }
 }
 
 fun onBarcodeDetected(barcode: MutableList<Barcode>) {
-    Log.d("valueSprin", "Start ---- - -- -- - -- --  : ")
-    barcode.forEach {
-        Log.d("valueSprin", "Value : " + it.rawValue.toString())
-    }
-    Log.d("valueSprin", "+ + + + + + + + ++ + ++ ++ End ")
-
     if (isFirst) {
         if (barcode.isNotEmpty()) {
             barcode.forEach {
@@ -188,7 +174,7 @@ fun onBarcodeDetected(barcode: MutableList<Barcode>) {
 private fun startEndTimer() {
     Handler().postDelayed({
         actualNavController.navigate(Screen.ResultScreen.route)
-    }, 2000)
+    }, TIME_TO_END)
 }
 
 private fun aspectRatio(
