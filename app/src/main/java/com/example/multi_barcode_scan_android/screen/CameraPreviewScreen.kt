@@ -23,12 +23,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.example.multi_barcode_scan_android.analyser.BarCodeAndQRCodeAnalyser
 import com.example.multi_barcode_scan_android.MainActivity
-import com.example.multi_barcode_scan_android.RATIO_16_9_VALUE
-import com.example.multi_barcode_scan_android.RATIO_4_3_VALUE
-import com.example.multi_barcode_scan_android.actualValues
 import com.example.multi_barcode_scan_android.navigation.Screen
+import com.example.multi_barcode_scan_android.util.analyser.BarCodeCustomAnalyser
+import com.example.multi_barcode_scan_android.util.constants.Constants.RATIO_16_9_VALUE
+import com.example.multi_barcode_scan_android.util.constants.Constants.RATIO_4_3_VALUE
+import com.example.multi_barcode_scan_android.util.constants.Constants.TIME_TO_END
+import com.example.multi_barcode_scan_android.util.constants.actualValues
 import com.google.mlkit.vision.barcode.Barcode
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -47,19 +48,19 @@ private lateinit var cameraControl: CameraControl
 private var isFirst = false
 private lateinit var actualNavController: NavController
 
-
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun CameraPreviewScreen(navController: NavController) {
-
     actualNavController = navController
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val preview = Preview.Builder().build()
 
-    val previewView = remember {
-        PreviewView(context)
-    }
+    val previewView =
+        remember {
+            PreviewView(context)
+        }
 
     val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
@@ -75,20 +76,19 @@ fun CameraPreviewScreen(navController: NavController) {
     previewView.post {
         startCamera(previewView)
     }
-
 }
 
-private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine {
-    continuation ->
+private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
+    suspendCoroutine {
+            continuation ->
         ProcessCameraProvider.getInstance(this).also { cameraProvider ->
             cameraProvider.addListener({
                 continuation.resume(cameraProvider.get())
             }, ContextCompat.getMainExecutor(this))
         }
-}
+    }
 
-
-private fun startCamera(previewView : PreviewView) {
+private fun startCamera(previewView: PreviewView) {
     // Get screen metrics used to setup camera for full screen resolution
     val metrics = DisplayMetrics().also { previewView.display.getRealMetrics(it) }
     val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
@@ -103,11 +103,12 @@ private fun startCamera(previewView : PreviewView) {
         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
         // Preview
-        val preview = Preview.Builder()
-            .setTargetAspectRatio(screenAspectRatio)
-            // Set initial target rotation
-            .setTargetRotation(rotation)
-            .build()
+        val preview =
+            Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                // Set initial target rotation
+                .setTargetRotation(rotation)
+                .build()
 
         preview.setSurfaceProvider(previewView.surfaceProvider)
 
@@ -116,12 +117,13 @@ private fun startCamera(previewView : PreviewView) {
         cameraProvider.unbindAll()
 
         try {
-            val camera = cameraProvider.bindToLifecycle(
-                MainActivity.activityInstance,
-                cameraSelector,
-                preview,
-                textBarcodeAnalyzer,
-            )
+            val camera =
+                cameraProvider.bindToLifecycle(
+                    MainActivity.activityInstance,
+                    cameraSelector,
+                    preview,
+                    textBarcodeAnalyzer,
+                )
             cameraControl = camera.cameraControl
             cameraInfo = camera.cameraInfo
             cameraControl.setLinearZoom(0.5f)
@@ -132,8 +134,10 @@ private fun startCamera(previewView : PreviewView) {
     }, ContextCompat.getMainExecutor(MainActivity.activityInstance.applicationContext))
 }
 
-
-private fun initializeAnalyzer(screenAspectRatio: Int, rotation: Int): UseCase {
+private fun initializeAnalyzer(
+    screenAspectRatio: Int,
+    rotation: Int,
+): UseCase {
     return ImageAnalysis.Builder()
         .setTargetAspectRatio(screenAspectRatio)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -142,33 +146,21 @@ private fun initializeAnalyzer(screenAspectRatio: Int, rotation: Int): UseCase {
         .also {
             it.setAnalyzer(
                 executor,
-                BarCodeAndQRCodeAnalyser { barcode ->
-                    /**
-                     * Change update  to true if you want to scan only one barcode or it will
-                     * continue scanning after detecting for the first time
-                     */
+                (BarCodeCustomAnalyser { barcode ->
                     if (processingBarcode.compareAndSet(false, false)) {
                         onBarcodeDetected(barcode)
-                    }
-                },
-            )
+                    } else Log.d("DetectionLOG", "Nothind detected")
+                }),
+                )
         }
 }
 
 fun onBarcodeDetected(barcode: MutableList<Barcode>) {
-    Log.d("valueSprin", "Start ---- - -- -- - -- --  : ")
-    barcode.forEach {
-        Log.d("valueSprin", "Value : " + it.rawValue.toString())
-    }
-    Log.d("valueSprin", "+ + + + + + + + ++ + ++ ++ End ")
-
     if (isFirst) {
         if (barcode.isNotEmpty()) {
             barcode.forEach {
                 actualValues.add(it.rawValue.toString())
             }
-
-
         }
         isFirst = false
     } else {
@@ -182,10 +174,13 @@ fun onBarcodeDetected(barcode: MutableList<Barcode>) {
 private fun startEndTimer() {
     Handler().postDelayed({
         actualNavController.navigate(Screen.ResultScreen.route)
-    }, 2000)
+    }, TIME_TO_END)
 }
 
-private fun aspectRatio(width: Int, height: Int): Int {
+private fun aspectRatio(
+    width: Int,
+    height: Int,
+): Int {
     val previewRatio = max(width, height).toDouble() / min(width, height)
     if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
         return AspectRatio.RATIO_4_3
