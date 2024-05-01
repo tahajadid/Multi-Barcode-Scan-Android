@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import com.example.multi_barcode_scan_android.util.constants.actualValues
 
 @Composable
-fun ResultScreen(navController: NavController) {
+fun ResultScreen() {
     Surface {
         ChoiceList()
     }
