@@ -146,12 +146,16 @@ private fun initializeAnalyzer(
         .also {
             it.setAnalyzer(
                 executor,
-                (BarCodeCustomAnalyser { barcode ->
-                    if (processingBarcode.compareAndSet(false, false)) {
-                        onBarcodeDetected(barcode)
-                    } else Log.d("DetectionLOG", "Nothind detected")
-                }),
-                )
+                (
+                    BarCodeCustomAnalyser { barcode ->
+                        if (processingBarcode.compareAndSet(false, false)) {
+                            onBarcodeDetected(barcode)
+                        } else {
+                            Log.d("DetectionLOG", "Nothing detected")
+                        }
+                    }
+                ),
+            )
         }
 }
 

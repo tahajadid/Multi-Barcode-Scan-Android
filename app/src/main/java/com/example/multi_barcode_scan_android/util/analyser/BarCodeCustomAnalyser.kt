@@ -36,13 +36,13 @@ class BarCodeCustomAnalyser(
             // process the image
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
-
                     // Task completed successfully
                     if (barcodes.isEmpty().not()) {
                         barcodeListener(barcodes)
                     }
                 }
                 .addOnFailureListener {
+                    // Print error
                     it.printStackTrace()
                 }
                 .addOnCompleteListener {

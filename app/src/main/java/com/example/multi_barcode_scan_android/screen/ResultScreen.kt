@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.multi_barcode_scan_android.util.constants.actualValues
 
 @Composable
@@ -40,18 +39,13 @@ fun ChoiceList() {
                 bottom = 6.dp,
             ),
         content = {
-            Log.d("TestValueMutt", " mutableListOf<String>() : " + actualValues)
-
             items(actualValues) { it ->
-
-                Log.d("TestValueMutt", " index: " + it)
-
                 Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     Canvas(
                         modifier =
                             Modifier
                                 .padding(start = 8.dp, end = 8.dp)
-                                .size(6.dp),
+                                .size(4.dp),
                     ) {
                         drawCircle(Color.Black)
                     }
