@@ -2,8 +2,10 @@ package com.example.multi_barcode_scan_android.screen
 
 import android.util.Log
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,6 +31,7 @@ fun ResultScreen() {
 @Composable
 fun ChoiceList() {
     LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
         // content padding
         contentPadding =
@@ -38,6 +41,8 @@ fun ChoiceList() {
                 end = 12.dp,
                 bottom = 6.dp,
             ),
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
         content = {
             items(actualValues) { it ->
                 Row(Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
